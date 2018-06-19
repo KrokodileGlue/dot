@@ -164,8 +164,8 @@ most of the Emacs regexp functions.
 #+END_SRC
 
 Some convenient keys for navigating around panes. These conflict with
-some ~org-mode~ keybindings sometimes but that's okay—~org-mode~ ruins
-a lot of good keybindings.
+some ~org-mode~ keybindings sometimes but that's okay — ~org-mode~
+ruins a lot of good keybindings.
 
 #+BEGIN_SRC emacs-lisp
   (global-set-key (kbd "<M-up>")    'windmove-up)
