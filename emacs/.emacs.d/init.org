@@ -785,7 +785,7 @@ A handy function that undos what ~fill-region~ do.
 #+END_SRC
 
 Sometimes pasting text from web sources places horrible Unicode
-characters into various kinds of documents. ~(asciify)~ solves this
+characters into various kinds of documents. ~asciify~ solves this
 problem by converting characters like ~“~ and ~”~ into ~``~ and ~''~
 respectively (the LaTeX equivalents). Applying the universal argument
 converts ~``~ and ~''~ into ~"~ instead. The guillemet translation
