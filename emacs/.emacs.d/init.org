@@ -1,0 +1,836 @@
+# -*- coding: utf-8 -*-
+# SPDX-License-Identifier: MIT
+
+#+SETUPFILE: ~/.emacs.d/org-theme.setup
+#+TITLE: kmacs
+#+PROPERTY: header-args :tangle yes
+
+# This is here in case I ever want to do anything fancy I guess.
+# LATEX_COMPILER: lualatex
+
+#+LATEX_HEADER: \usepackage[parfill]{parskip}
+#+LATEX_HEADER: \usepackage[margin=1in]{geometry}
+
+# TODO: Use ~bind-key.el~ instead of ~global-set-key~.
+# TODO: Use ~use-package~ more extensively to automate package
+#       installation.
+# TODO: Use ~org-plus-contribs~ and add ~org-drill~ to ~org-modules~.
+# TODO: Change ~org-drill.el~ learning fraction.
+# TODO: Figure out how to share customized variables across machines
+#       properly.
+# TODO: Figure out a good way to distribute ~oak-mode.el~ and
+#       ~erc-tex.el~.
+# TODO: Maybe use more ~:defer~.
+
+# This is here so that the table of contents doesn't overlap with the
+# first page of contents in LaTeX renders.
+
+#+LATEX: \clearpage{}
+
+* Introduction
+
+Welcome to my Emacs configuration.
+
+* Basic Setup
+
+Keep ~M-x customize-variable~ from cluttering things up and being
+overwritten.
+
+#+BEGIN_SRC emacs-lisp
+  (setq custom-file "~/.emacs.d/custom.el")
+  (load custom-file)
+#+END_SRC
+
+Add ~lisp/~ to ~load-path~ for extra lisp code.
+
+#+BEGIN_SRC emacs-lisp
+  (add-to-list 'load-path "~/.emacs.d/lisp/")
+#+END_SRC
+
+Manually set my full-name and mail-address fields.
+
+#+BEGIN_SRC emacs-lisp
+  (setq user-full-name "KrokodileGlue"
+      user-mail-address "KrokodileGlue@outlook.com")
+#+END_SRC
+
+Start Emacs as a server/daemon so that we can open files from the
+system file browser with the Emacs client.
+
+#+BEGIN_SRC emacs-lisp
+  (server-start)
+#+END_SRC
+
+Setup the MELPA Emacs package archive thing.
+
+#+BEGIN_SRC emacs-lisp
+  (require 'package)
+
+  (setq package-enable-at-startup nil)
+
+  (add-to-list 'package-archives '("melpa" . "http://melpa.org/packages/") t)
+  (add-to-list 'package-archives '("gnu" . "http://elpa.gnu.org/packages/"))
+  (add-to-list 'package-archives '("org" . "http://orgmode.org/elpa/") t)
+
+  (package-initialize)
+#+END_SRC
+
+To make this config work out of the box it's necessary to manually
+ensure that ~use-package~ is installed.
+
+#+BEGIN_SRC emacs-lisp
+  (unless (package-installed-p 'use-package)
+    (package-refresh-contents)
+    (package-install 'use-package))
+
+  (require 'use-package)
+  (require 'bind-key)			; Comes with use-package.
+#+END_SRC
+
+Typing ~:ensure t~ in every use-package is silly. This just makes it
+so any instance of use-package automatically installs that package
+if it hasn't been installed already.
+
+#+BEGIN_SRC emacs-lisp
+  (setq use-package-always-ensure t)
+#+END_SRC
+
+Maximize on startup, hide some ugly GUI elements, and turn on
+~delete-selection-mode~.
+
+#+BEGIN_SRC emacs-lisp
+  (add-to-list 'default-frame-alist '(fullscreen . maximized))
+  (toggle-scroll-bar -1)
+  (tool-bar-mode -1)
+  (delete-selection-mode 1)
+  (setq scroll-step 1)
+#+END_SRC
+
+I like source code to be perfect aesthetically, so it makes sense that
+I'd want my column limit to be strict. Enforcing perfection, however,
+creates a lot of tension due to conflicting interests. For instance, I
+allow ~org-mode~ to /visually/ indent sections. This causes the visual
+column and the logical column to not match, but this package only
+cares about the logical column. The result is that some visual lines
+consist of one or two words while others run over the edge of the
+screen.
+
+So anyway this is disabled for now.
+
+#+BEGIN_SRC emacs-lisp :tangle no
+  (use-package visual-fill-column
+     :init (global-visual-line-mode)
+           (global-visual-fill-column-mode))
+#+END_SRC
+
+Set up and configure Helm.
+
+#+BEGIN_SRC emacs-lisp
+  (use-package helm
+    :bind (("M-x" . helm-M-x)
+           ("C-x r b" . helm-filtered-bookmarks)
+           ("C-x C-f" . helm-find-files))
+    :init (helm-mode 1))
+#+END_SRC
+
+Set NeoTree.
+
+#+BEGIN_SRC emacs-lisp
+  (use-package neotree :bind ("C-c f" . neotree-dir))
+#+END_SRC
+
+A handy little shortcut for toggling the maximized state of the
+current frame because the default keys (~<M-f10>~ and ~ESC <f10>~) are
+so shitty. Not that big of a deal since I mostly use tiling window
+managers these days but it still comes in handy sometimes.
+
+#+BEGIN_SRC emacs-lisp
+  (global-set-key (kbd "C-c q") 'toggle-frame-maximized)
+#+END_SRC
+
+Force Emacs to put it's stupid backup files somewhere that's not in my
+/goddamn way/.
+
+#+BEGIN_SRC emacs-lisp
+  (setq backup-directory-alist `(("." . "~/.emacs.d/backups")))
+#+END_SRC
+
+Set the ~re-builder~ syntax to ~string~, which is the syntax used by
+most of the Emacs regexp functions.
+
+#+BEGIN_SRC emacs-lisp
+  (require 're-builder)
+  (setq reb-re-syntax 'string)
+#+END_SRC
+
+Some convenient keys for navigating around panes. These conflict with
+some ~org-mode~ keybindings sometimes but that's okay—~org-mode~ ruins
+a lot of good keybindings.
+
+#+BEGIN_SRC emacs-lisp
+  (global-set-key (kbd "<M-up>")    'windmove-up)
+  (global-set-key (kbd "<M-down>")  'windmove-down)
+  (global-set-key (kbd "<M-left>")  'windmove-left)
+  (global-set-key (kbd "<M-right>") 'windmove-right)
+#+END_SRC
+
+The cursor blinking is a bit annoying.
+
+#+BEGIN_SRC emacs-lisp
+  (blink-cursor-mode 0)
+#+END_SRC
+
+Force Emacs to display the column and line number in the mode line
+even if it doesn't want to.
+
+#+BEGIN_SRC emacs-lisp
+  (setq column-number-mode t)
+#+END_SRC
+
+An interesting little minor-mode that puts an animated beacon on the
+cursor when certain operations are performed. Currently disabled
+because it's too noisy.
+
+#+BEGIN_SRC emacs-lisp :tangle no
+  (use-package beacon :init (beacon-mode 1))
+#+END_SRC
+
+Load ~oak-mode.el~. This needs to happen here because the hasklig
+ligature code uses it.
+
+#+BEGIN_SRC emacs-lisp
+  (require 'oak-mode)
+#+END_SRC
+
+Emacs makes the most annoying beeping sounds on Windows. Shut the fuck
+up you fucking piece of shit!
+
+#+BEGIN_SRC emacs-lisp
+  (setq visible-bell t)
+  (setq ielm-noisy nil) ; I don't use ielm often but when I do it needs
+			; to shut the fuck up.
+#+END_SRC
+
+Quickly delete a file from its buffer.
+
+#+BEGIN_SRC emacs-lisp
+  (defun delete-file-and-buffer ()
+    "Kill the current buffer and deletes the file it is visiting.
+
+URL: `http://emacsredux.com/blog/2013/04/03/delete-file-and-buffer/'"
+    (interactive)
+    (let ((filename (buffer-file-name)))
+  (when filename
+    (if (vc-backend filename)
+        (vc-delete-file filename)
+      (progn
+        (delete-file filename)
+        (message "Deleted file %s" filename)
+        (kill-buffer))))))
+
+  (global-set-key (kbd "C-c D") 'delete-file-and-buffer)
+#+END_SRC
+
+** Encoding
+
+Everyone should always use UTF-8, always. 1,114,112 code points
+ought to be enough for anybody.
+
+#+BEGIN_SRC emacs-lisp
+  (set-language-environment "UTF-8")
+  (set-default-coding-systems 'utf-8)
+#+END_SRC
+
+** Spelling
+
+~ispell~ is an unfortunate package name since it actually allows you
+to use whatever spelling program you want behind-the-scenes. You'll
+need to have aspell installed and running for this to work, of course.
+
+#+BEGIN_SRC emacs-lisp
+  (require 'flyspell)			; Built into modern Emacs.
+  (setq ispell-program-name "aspell")
+  (setq ispell-dictionary "english")
+#+END_SRC
+
+* Aesthetic
+
+** Theme
+
+Current theme configuration:
+
+#+BEGIN_SRC emacs-lisp
+  (use-package nimbus-theme      :init (load-theme 'nimbus t))
+  (use-package spaceline
+    :config (spaceline-spacemacs-theme))
+#+END_SRC
+
+The rest of this subsection consists of disabled code blocks.
+
+#+BEGIN_SRC emacs-lisp :tangle no
+  (use-package color-theme-space-cadet :init (color-theme-space-cadet))
+  (use-package purple-haze-theme :init (load-theme 'purple-haze t))
+  (use-package spacemacs-theme   :init (load-theme 'spacemacs-dark t))
+  (use-package ir-black-theme    :init (load-theme 'ir-black t))
+  (use-package nimbus-theme      :init (load-theme 'nimbus t))
+  (use-package cherry-blossom-theme
+    :init (load-theme 'cherry-blossom t))
+#+END_SRC
+
+There are two moe themes to pick from; choose wisely. If you use the
+light theme then you should also enable the last line because it looks
+nicer.
+
+#+BEGIN_SRC emacs-lisp :tangle no
+  (use-package moe-theme)
+  (moe-dark)
+  (moe-light)
+  (moe-theme-set-color 'cyan)
+#+END_SRC
+
+There are three ample themes to pick from; choose wisely. You must
+load and enable the theme you wish to use.
+
+#+BEGIN_SRC emacs-lisp :tangle no
+  (use-package ample-theme)
+  (load-theme 'ample t t)
+  (load-theme 'ample-flat t t)
+  (load-theme 'ample-light t t)
+  (enable-theme 'ample)
+  (enable-theme 'ample-flat)
+  (enable-theme 'ample-light)
+#+END_SRC
+
+Spaceline makes the mode line look nice. Turn this code back on if you
+decide to use the Spacemacs theme.
+
+#+BEGIN_SRC emacs-lisp :tangle no
+  (use-package spaceline-config
+    :config (spaceline-spacemacs-theme))
+#+END_SRC
+
+** Fonts
+
+#+BEGIN_SRC emacs-lisp
+  ;; I love consolas.
+  (set-face-attribute 'default nil :family "Consolas" :height 100)
+
+  ;; (set-frame-font "Nimbus Mono L" nil t)
+  ;; (set-frame-font "Hasklig-10" nil t)
+#+END_SRC
+
+*** Hasklig Ligatures
+
+See https://github.com/i-tu/Hasklig/issues/84 and
+https://github.com/i-tu/Hasklig/blob/master/GlyphOrderAndAliasDB#L1588
+for details on this stuff. Currently disabled because I'm not using
+Hasklig.
+
+# TODO: I tend to use a prefix $ for local variables.
+
+#+BEGIN_SRC emacs-lisp :tangle no
+  (defun my-correct-symbol-bounds (pretty-alist)
+      "Prepend a TAB character to each symbol in this alist,
+  this way compose-region called by prettify-symbols-mode
+  will use the correct width of the symbols
+  instead of the width measured by char-width."
+      (mapcar (lambda (el)
+	    (setcdr el (string ?\t (cdr el)))
+	    el)
+	  pretty-alist))
+
+    (defun my-ligature-list (ligatures codepoint-start)
+      "Create an alist of strings to replace with
+  codepoints starting from codepoint-start."
+      (let ((codepoints
+	     (-iterate '1+ codepoint-start (length ligatures))))
+	(-zip-pair ligatures codepoints)))
+
+    (setq my-hasklig-ligatures
+      (let* ((ligs '("&&" "***" "*>" "\\\\" "||" "|>" "::"
+	     "==" "===" "==>" "=>" "=<<" "!!" ">>"
+	     ">>=" ">>>" ">>-" ">-" "->" "-<" "-<<"
+	     "<*" "<*>" "<|" "<|>" "<$>" "<>" "<-"
+	     "<<" "<<<" "<+>" ".." "..." "++" "+++"
+	     "/=" ":::" ">=>" "->>" "<=>" "<=<" "<->")))
+	(my-correct-symbol-bounds (my-ligature-list ligs #Xe100))))
+
+    ;; nice glyphs for haskell with hasklig
+    (defun my-set-hasklig-ligatures ()
+      "Add hasklig ligatures for use with prettify-symbols-mode."
+      (setq prettify-symbols-alist
+	(append my-hasklig-ligatures prettify-symbols-alist))
+      (prettify-symbols-mode))
+#+END_SRC
+
+Add any hooks here if you want a particular mode to use these
+ligatures. This block will have to be tangled if you want it to work,
+of course.
+
+#+BEGIN_SRC emacs-lisp :tangle no
+  (add-hook 'haskell-mode-hook 'my-set-hasklig-ligatures)
+  (add-hook 'oak-mode-hook     'my-set-hasklig-ligatures)
+#+END_SRC
+
+* Programming
+** Style & Utilities
+
+I prefer to use tabs for indentation, displayed as eight spaces.
+
+#+BEGIN_SRC emacs-lisp
+  (setq cmake-tab-width 8)
+  (setq-default
+        c-basic-offset 8
+        c-indent-level 8
+        c-indent-tabs-mode 1)
+#+END_SRC
+
+Turn on spellchecking for programming modes. This is nice to have
+around when it catches comment typos.
+
+#+BEGIN_SRC emacs-lisp
+  (add-hook 'prog-mode-hook 'flyspell-prog-mode)
+#+END_SRC
+
+~linum-mode~ is currently disabled because it is for
+homosexuals.
+
+PDFs and other document types break badly on some systems when
+~linum-mode~ is on because ~doc-view-mode~ counts as a programming
+mode for some reason. See
+https://stackoverflow.com/questions/18260904/ for details on the PDF
+breakage.
+
+#+BEGIN_SRC emacs-lisp :tangle no
+  (require 'linum)
+  (add-hook 'prog-mode-hook 'linum-on)
+
+  ;; This is a nice workaround for the potential ~doc-view-mode~ woes.
+  (add-hook 'doc-view-mode-hook
+            (lambda ()
+              (linum-mode -1)))
+#+END_SRC
+
+I don't use ~whitespace-mode~ any more because the intense visual
+clutter it creates has become unbearable to me—this is the same reason
+I have ~linum-mode~, ~beacon-mode~, and others disabled now.
+
+#+BEGIN_SRC emacs-lisp :tangle no
+  (use-package whitespace
+    :config (add-hook
+             'prog-mode-hook
+             'whitespace-mode))
+#+END_SRC
+
+This makes writing comments a little easier.
+
+#+BEGIN_SRC emacs-lisp
+  (add-hook 'prog-mode-hook 'auto-fill-mode)
+#+END_SRC
+
+** General
+
+~color-identifiers-mode~ is kinda cool but I don't use it any more.
+
+#+BEGIN_SRC emacs-lisp :tangle no
+  (use-package color-identifiers-mode
+    :config (global-color-identifiers-mode))
+#+END_SRC
+
+Bind ~f5~ to the compile command.
+
+#+BEGIN_SRC emacs-lisp
+  (global-set-key (kbd "<f5>") (lambda ()
+                 (interactive)
+                 (setq-local compilation-read-command
+                     nil)
+                 (compile)))
+#+END_SRC
+
+I used to have ~delete-trailing-whitespace~ hooked up to
+~write-file-functions~ so that saving a file would automatically
+delete trailing whitespace, but that's not very practical if you're
+working on another person's particularly shitty code base (not
+pointing any fingers) because it clutters commits.
+
+#+BEGIN_SRC emacs-lisp
+  (global-set-key (kbd "C-c p") 'delete-trailing-whitespace)
+#+END_SRC
+
+Add ~multiple-cursors~ and ~phi-search~ (which is a reimplementation
+of isearch that's compatible with ~multiple-cursors~). All this crap
+is a bit bloaty so if you want to disable this that's cool, but I like
+to have it around.
+
+#+BEGIN_SRC emacs-lisp
+  (use-package multiple-cursors
+    :bind (("C->" . mc/mark-next-like-this)
+	   ("C-<" . mc/mark-previous-like-this)
+	   ("C-c C-<" . mc/mark-all-like-this))
+    :config (add-hook 'prog-mode-hook 'multiple-cursors-mode))
+  (use-package phi-search
+    :bind (("C-s" . phi-search)
+	   ("C-r" . phi-search-backward)))
+#+END_SRC
+
+** Flycheck
+
+Flycheck enables on-the-fly error syntax checking for a number of
+programming languages.
+
+#+BEGIN_SRC emacs-lisp
+  (use-package flycheck :init (global-flycheck-mode))
+#+END_SRC
+
+** SmartParens
+
+All programming modes should use smartparens!
+
+#+BEGIN_SRC emacs-lisp
+  (use-package smartparens
+    :config (add-hook
+             'prog-mode-hook
+             'smartparens-mode))
+#+END_SRC
+
+Hmm, I wonder if this should be somewhere else.
+
+#+BEGIN_SRC emacs-lisp
+  (global-set-key (kbd "<M-S-left>") 'sp-backward-sexp)
+  (global-set-key (kbd "<M-S-right>") 'sp-forward-sexp)
+  (sp-local-pair 'c-mode "{" nil :post-handlers '(:add ("||\n[i]" "RET")))
+#+END_SRC
+
+For some reason SmartParens doesn't provide C++-style comments by
+default, so I'll just define them myself.
+
+#+BEGIN_SRC emacs-lisp
+  (add-hook 'c-mode-common-hook
+        (lambda ()
+      (sp-pair "/*" "*/")
+      (sp-pair "/* " " */")))
+#+END_SRC
+
+** Magit
+
+Magit is so fantastic it requires no configuration. It bothers me a
+bit that this binding doesn't lead with ~C-c~ but this is what the
+(massive and excellent) Magit manual recommends, so I'll just go with
+it.
+
+#+BEGIN_SRC emacs-lisp
+  (use-package magit :bind ("C-x g" . magit-status))
+#+END_SRC
+
+** Company
+
+Require ~company~ and hook it up to ~c-mode-common-hook~.
+
+#+BEGIN_SRC emacs-lisp
+  (use-package company
+    :config (add-hook
+             'c-mode-common-hook
+             'global-company-mode))
+#+END_SRC
+
+Make ~company-mode~ automagically figure out whether we want to
+complete an identifier or indent a line of code.
+
+#+BEGIN_SRC emacs-lisp
+  (defun complete-or-indent ()
+    "A utility function that picks between indenting the current
+  line and invoking company-mode completion depending on the
+  context."
+    (interactive)
+    (if (company-manual-begin)
+        (company-complete-common)
+      (indent-according-to-mode)))
+#+END_SRC
+
+Let ~company-mode~ know that it's allowed to complete header paths.
+
+#+BEGIN_SRC emacs-lisp
+  (setq company-backends (delete 'company-semantic company-backends))
+  (add-to-list 'company-backends 'company-c-headers)
+#+END_SRC
+
+** YaSnippet
+
+#+BEGIN_SRC emacs-lisp
+  (add-to-list 'load-path "~/.emacs.d/plugins/yasnippet")
+  (use-package yasnippet :config (yas-global-mode 1))
+#+END_SRC
+
+*** TODO Use up-to-date snippets
+
+The ones that come standard are a bit inadequate, but it's been some
+time since I touched that stuff so I don't remember what's missing. A
+git submodule might work well for this, or maybe ~yasnippet-snippets~
+is the answer—https://github.com/joaotavora/yasnippet
+
+** GGTags
+
+Require ggtags. I Honestly don't remember where I got the keybindings
+but they look great so whatever.
+
+#+BEGIN_SRC emacs-lisp
+  (use-package ggtags
+    :config (add-hook 'c-mode-common-hook
+                      (lambda ()
+                        (when (derived-mode-p
+                               'c-mode
+                               'c++-mode
+                               'java-mode
+                               'asm-mode)
+                          (ggtags-mode 1))))
+    :bind (("C-c g s" . ggtags-find-other-symbol)
+           ("C-c g h" . ggtags-view-tag-history)
+           ("C-c g r" . ggtags-find-reference)
+           ("C-c g f" . ggtags-find-file)
+           ("C-c g c" . ggtags-create-tags)
+           ("C-c g u" . ggtags-update-tags)
+           ("M-," . pop-tag-mark)))
+#+END_SRC
+
+** C/C++
+
+Enable ~gdb-many-windows~, which opens a set of frames that display
+useful information, such as local variables, registers, stack trace,
+etc.
+
+#+BEGIN_SRC emacs-lisp
+  (setq gdb-many-windows t gdb-show-main t)
+#+END_SRC
+
+Make ~compile-command~ a directory-local variable so that we can set
+it in ~.dir-locals.el~ files.
+
+#+BEGIN_SRC emacs-lisp
+  (make-variable-buffer-local 'compile-command)
+#+END_SRC
+
+** Web
+
+Require ~web-mode~ and force it to use tabs.
+
+#+BEGIN_SRC emacs-lisp
+  (use-package web-mode
+    :config (add-hook
+             'web-mode-hook
+             'web-mode-use-tabs))
+#+END_SRC
+
+** oak
+
+Associate the .k extension with ~oak-mode~.
+
+#+BEGIN_SRC emacs-lisp
+  (add-to-list 'auto-mode-alist '("\\.k\\'" . oak-mode))
+#+END_SRC
+
+Enable identifier highlighting by adding ~oak-mode~ to
+~color-identifiers:modes-alist~. Currently disabled; enable it if you
+turn on ~color-identifiers-mode~.
+
+#+BEGIN_SRC emacs-lisp :tangle no
+  (add-to-list
+   'color-identifiers:modes-alist
+   `(oak-mode .
+      ("[^.][[:space:]]*"
+       "\\_<\\([a-zA-Z_$]\\(?:\\s_\\|\\sw\\)*\\)" (nil))))
+#+END_SRC
+
+* LaTeX
+
+Grab AUCTeX and AUCTeX-Lua. Unfortunately, the ~auctex~ package
+available from MELPA doesn't actually provide a feature called
+"auctex", so a different package has to be expected, otherwise
+~use-package~ will complain that the feature doesn't exist. Any
+package will do, but it's best to use a built-in package.
+
+We could just ~(use-package auctex :defer t)~, but that would prevent
+things like ~:config~ and ~:bind~ from being executed.
+
+The keybinding is there because it's nice to be able to edit blocks of
+Lua code in LuaLaTeX documents with full syntax highlighting and
+correct indentation.
+
+#+BEGIN_SRC emacs-lisp
+  (use-package tex :defer t :ensure auctex)
+  (use-package auctex-lua
+    :bind ("C-c l" . LaTeX-edit-Lua-code-start))
+#+END_SRC
+
+I immensely dislike the fuckery that ~LaTeX-mode~ does to my beautiful
+monospace fonts. Taken from https://stackoverflow.com/a/9539639.
+
+#+BEGIN_SRC emacs-lisp
+  (setq font-latex-fontify-sectioning 'color)
+  (setq font-latex-script-display (quote (nil)))
+  (custom-set-faces
+   '(font-latex-subscript-face ((t nil)))
+   '(font-latex-superscript-face ((t nil))))
+#+END_SRC
+
+Turn on automatic spell checking in ~LaTeX-mode~ (the AUCTeX version
+of Emacs' built-in ~latex-mode~) and also turn on ~auto-fill-mode~.
+Note that ~auto-fill-mode~ does fucky things with math and so must be
+disabled by hand quite often.
+
+#+BEGIN_SRC emacs-lisp
+  (add-hook 'LaTeX-mode-hook 'flyspell-mode)
+  (add-hook 'LaTeX-mode-hook 'flyspell-buffer)
+  (add-hook 'LaTeX-mode-hook 'auto-fill-mode)
+#+END_SRC
+
+~latex-preview-pane~ is fantastic. I wish it was easier to set up on
+Windows™. I used to have this hooked into ~LaTeX-mode~ but it creates
+too many problems. Org likes to create TeX buffers when generating PDF
+files, for instance, so it would get pretty spammy.
+
+#+BEGIN_SRC emacs-lisp
+  (use-package latex-preview-pane)
+#+END_SRC
+
+"CDLaTeX mode is a minor mode that is normally used in combination
+with a major LaTeX mode like AUCTeX in order to speed-up insertion of
+environments and math templates." Very nice.
+
+#+BEGIN_SRC emacs-lisp
+  (use-package cdlatex)
+#+END_SRC
+
+* Org
+
+Turn on syntax highlighting for source code embedded in org-mode
+files.
+
+#+BEGIN_SRC emacs-lisp
+  (setq org-src-fontify-natively t)
+#+END_SRC
+
+A thin wrapper around ~org-babel-load-file~ that tangles and loads
+this file.
+
+#+BEGIN_SRC emacs-lisp
+  (global-set-key (kbd "C-c i")
+          (lambda()
+            (interactive)
+            (org-babel-load-file "~/.emacs.d/init.org")))
+#+END_SRC
+
+Spell-checking and convenient little settings.
+
+#+BEGIN_SRC emacs-lisp
+  (add-hook 'org-mode-hook 'flyspell-mode)
+  (add-hook 'org-mode-hook 'auto-fill-mode)
+  ;; (add-hook 'org-mode-hook 'org-indent-mode)
+#+END_SRC
+
+Evaluating code blocks in ~org-mode~ documents is neat but you need to
+load each language individually.
+
+#+BEGIN_SRC emacs-lisp
+  (require 'ob-C)
+  (org-babel-do-load-languages
+   'org-babel-load-languages
+   '((C . t) (emacs-lisp . t)))
+#+END_SRC
+
+This colorizes bold text (text between *asterisks* in org documents)
+bright red.
+
+#+BEGIN_SRC emacs-lisp
+  (add-to-list 'org-emphasis-alist '("*" (:foreground "red")))
+#+END_SRC
+
+Sometimes you just want typing math to be nicer.
+
+#+BEGIN_SRC emacs-lisp
+  (add-hook 'org-mode-hook 'turn-on-org-cdlatex)
+#+END_SRC
+
+Flycheck generates a ridiculous amount of spam in elisp snippets
+because it expects each snippet to follow the style standards of an
+Emacs package, so we'll just turn it off here.
+
+There's probably a way to make it fuck off with the package/comment
+linting and retain basic syntax checking but I don't really care about
+that right now.
+
+#+BEGIN_SRC emacs-lisp
+  (add-hook 'org-src-mode-hook
+	    (lambda () (flycheck-mode -1)))
+#+END_SRC
+
+* ERC
+
+#+BEGIN_SRC emacs-lisp
+  (use-package erc)
+  (use-package znc)
+  ;; (require 'erc-tex)
+#+END_SRC
+
+* Functions
+
+A handy function that undos what ~fill-region~ do.
+
+#+BEGIN_SRC emacs-lisp
+  (defun unfill-region ($beg $end)
+    "Unfill the region from $BEG to $END, joining text paragraphs
+  into a single logical line."
+    (interactive "*r")
+    (let ((fill-column (point-max)))
+  (fill-region $beg $end)))
+#+END_SRC
+
+Sometimes pasting text from web sources places horrible Unicode
+characters into various kinds of documents. ~(asciify)~ solves this
+problem by converting characters like ~“~ and ~”~ into ~``~ and ~''~
+respectively (the LaTeX equivalents). Applying the universal argument
+converts ~``~ and ~''~ into ~"~ instead. The guillemet translation
+works best with ~\usepackage{lmodern}~.
+
+#+BEGIN_SRC emacs-lisp
+  (defun asciify ($beg $end)
+    "This function translates Unicode-only punctuation characters
+  into nearly-equivalent ASCII characters in the current region."
+    (interactive "*r")
+    (let ((case-fold-search t))
+      (save-restriction
+        (narrow-to-region $beg $end)
+        (mapc
+         (lambda ($pair)
+           (goto-char (point-min))
+           (while (re-search-forward (elt $pair 0) (point-max) t)
+             (replace-match (elt $pair 1))))
+         [
+          ["‘" "`"]
+          ["’" "'"]
+          ["“" "``"]
+          ["”" "''"]
+          ["…" "..."]
+          ["—" "---"]
+          ["»" ">>"]
+          ["«" "<<"]
+          ])
+        (unless (null current-prefix-arg)
+          (goto-char (point-min))
+          (while (re-search-forward "``\\|''" (point-max) t)
+            (replace-match "\""))
+          (goto-char (point-min))
+          (while (re-search-forward "`\\|'" (point-max) t)
+            (replace-match "'"))))))
+
+  (global-set-key (kbd "C-c a") 'asciify)
+#+END_SRC
+
+* Fin
+
+Let's leave a good impression with the user.
+
+#+BEGIN_SRC emacs-lisp
+  (add-hook 'emacs-startup-hook
+	    (lambda ()
+	      (message "Welcome to CostCo, I love you.")))
+#+END_SRC
