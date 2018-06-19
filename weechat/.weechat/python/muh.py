@@ -305,7 +305,7 @@ def cb(data, buf, date, tags, displayed, highlight, nick, msg):
         while my_mojo in used_mojo: my_mojo = random.choice(mojo)
         if repeat(chan, msg, r".*?\bk\b", "\x02" + my_mojo + "\x0F"):
             used_mojo.append(my_mojo)
-	return w.WEECHAT_RC_OK
+        return w.WEECHAT_RC_OK
 
     return w.WEECHAT_RC_OK
 
