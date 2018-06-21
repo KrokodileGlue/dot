@@ -5,9 +5,7 @@
 #+TITLE: kmacs
 #+PROPERTY: header-args :tangle yes
 
-# This is here in case I ever want to do anything fancy I guess.
-# LATEX_COMPILER: lualatex
-
+#+LATEX_COMPILER: lualatex
 #+LATEX_HEADER: \usepackage[parfill]{parskip}
 #+LATEX_HEADER: \usepackage[margin=1in]{geometry}
 
@@ -229,6 +227,15 @@ URL: `http://emacsredux.com/blog/2013/04/03/delete-file-and-buffer/'"
         (kill-buffer))))))
 
   (global-set-key (kbd "C-c D") 'delete-file-and-buffer)
+#+END_SRC
+
+Opening a symlink to a version-controlled file sets of a prompt asking
+you if you want to follow the symlink (because you may be surprised
+later if you don't realize it's version-controlled). Setting this
+value to ~t~ suppresses that prompt.
+
+#+BEGIN_SRC emacs-lisp
+  (setq vc-follow-symlinks t)
 #+END_SRC
 
 ** Encoding
@@ -622,7 +629,7 @@ Require ~web-mode~ and force it to use tabs.
 
 ** oak
 
-Associate the .k extension with ~oak-mode~.
+Associate the ~.k~ extension with ~oak-mode~.
 
 #+BEGIN_SRC emacs-lisp
   (add-to-list 'auto-mode-alist '("\\.k\\'" . oak-mode))
@@ -752,11 +759,9 @@ Sometimes you just want typing math to be nicer.
 
 Flycheck generates a ridiculous amount of spam in elisp snippets
 because it expects each snippet to follow the style standards of an
-Emacs package, so we'll just turn it off here.
-
-There's probably a way to make it fuck off with the package/comment
-linting and retain basic syntax checking but I don't really care about
-that right now.
+Emacs package, so we'll just turn it off here. There's probably a way
+to make it fuck off with the package/comment linting and retain basic
+syntax checking but I don't really care about that right now.
 
 #+BEGIN_SRC emacs-lisp
   (add-hook 'org-src-mode-hook
