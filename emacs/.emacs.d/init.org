@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
 # SPDX-License-Identifier: MIT
 
-#+SETUPFILE: ~/.emacs.d/org-theme.setup
+#+SETUPFILE: ~/org-minimal-html-theme.setup
+# #+SETUPFILE: ~/.emacs.d/org-theme.setup
 #+TITLE: kmacs
 #+PROPERTY: header-args :tangle yes
 
@@ -100,6 +101,7 @@ Maximize on startup, hide some ugly GUI elements, and turn on
   (add-to-list 'default-frame-alist '(fullscreen . maximized))
   (toggle-scroll-bar -1)
   (tool-bar-mode -1)
+  (menu-bar-mode -1)
   (delete-selection-mode 1)
   (setq scroll-step 1)
 #+END_SRC
@@ -232,10 +234,11 @@ URL: `http://emacsredux.com/blog/2013/04/03/delete-file-and-buffer/'"
 Opening a symlink to a version-controlled file sets of a prompt asking
 you if you want to follow the symlink (because you may be surprised
 later if you don't realize it's version-controlled). Setting this
-value to ~t~ suppresses that prompt.
+value to ~nil~ causes Emacs to /not/ follow the symlink and also
+suppresses the prompt (it displays a warning instead).
 
 #+BEGIN_SRC emacs-lisp
-  (setq vc-follow-symlinks t)
+  (setq vc-follow-symlinks nil)
 #+END_SRC
 
 ** Encoding
@@ -700,14 +703,20 @@ files, for instance, so it would get pretty spammy.
 #+END_SRC
 
 "CDLaTeX mode is a minor mode that is normally used in combination
-with a major LaTeX mode like AUCTeX in order to speed-up insertion of
-environments and math templates." Very nice.
+with a major $\LaTeX$ mode like AUCTeX in order to speed-up insertion
+of environments and math templates." Very nice.
 
 #+BEGIN_SRC emacs-lisp
   (use-package cdlatex)
 #+END_SRC
 
 * Org
+
+Why would I not want "proper" quotes in my $\LaTeX$ exports?
+
+#+BEGIN_SRC emacs-lisp
+  (setq org-export-with-smart-quotes t)
+#+END_SRC
 
 Turn on syntax highlighting for source code embedded in org-mode
 files.
@@ -792,9 +801,9 @@ A handy function that undos what ~fill-region~ do.
 Sometimes pasting text from web sources places horrible Unicode
 characters into various kinds of documents. ~asciify~ solves this
 problem by converting characters like ~“~ and ~”~ into ~``~ and ~''~
-respectively (the LaTeX equivalents). Applying the universal argument
-converts ~``~ and ~''~ into ~"~ instead. The guillemet translation
-works best with ~\usepackage{lmodern}~.
+respectively (the $\LaTeX$ equivalents). Applying the universal
+argument converts ~``~ and ~''~ into ~"~ instead. The guillemet
+translation works best with ~\usepackage{lmodern}~.
 
 #+BEGIN_SRC emacs-lisp
   (defun asciify ($beg $end)
