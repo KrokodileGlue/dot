@@ -103,7 +103,17 @@ Maximize on startup, hide some ugly GUI elements, and turn on
   (tool-bar-mode -1)
   (menu-bar-mode -1)
   (delete-selection-mode 1)
-  (setq scroll-step 1)
+#+END_SRC
+
+This makes it so scrolling moves about one line at a time instead of
+moving in chunks when you hit the top or bottom of the screen. I used
+to have a few lines of code to do that job but there were problems
+with "jumpiness"; sometimes moving would trigger a redisplay, which
+would cause the cursor to jump to the center of the screen. So instead
+I use this package which works quite nicely.
+
+#+BEGIN_SRC emacs-lisp
+  (use-package smooth-scrolling :init (smooth-scrolling-mode t))
 #+END_SRC
 
 I like source code to be perfect aesthetically, so it makes sense that
