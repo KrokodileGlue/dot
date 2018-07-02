@@ -146,7 +146,6 @@ So anyway this is disabled for now.
            (global-visual-fill-column-mode))
 #+END_SRC
 
-Set up and configure Helm.
 
 #+BEGIN_SRC emacs-lisp
   (use-package helm
@@ -156,7 +155,6 @@ Set up and configure Helm.
     :init (helm-mode 1))
 #+END_SRC
 
-Set NeoTree.
 
 #+BEGIN_SRC emacs-lisp
   (use-package neotree :bind ("C-c f" . neotree-dir))
