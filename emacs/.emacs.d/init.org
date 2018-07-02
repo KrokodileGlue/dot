@@ -27,11 +27,9 @@
 #+LATEX: \clearpage{}
 
 * Introduction
-
 Welcome to my Emacs configuration.
 
 ** Loading
-
 #+BEGIN_SRC emacs-lisp
   (global-set-key (kbd "C-c i")
           (lambda()
@@ -40,7 +38,6 @@ Welcome to my Emacs configuration.
 #+END_SRC
 
 ** Requirements
-
 To use all of the features offered by this configuration you'll need
 to have the following external programs installed (not counting other
 programs required by packages like ~org-mode~):
@@ -50,9 +47,7 @@ programs required by packages like ~org-mode~):
 - git
 
 * Basic Setup
-
 ** Custom file
-
 Keep ~M-x customize-variable~ from cluttering things up and being
 overwritten.
 
@@ -62,7 +57,6 @@ overwritten.
 #+END_SRC
 
 ** Lisp paths
-
 Add ~lisp/~ to ~load-path~ for extra lisp code.
 
 #+BEGIN_SRC emacs-lisp
@@ -70,7 +64,6 @@ Add ~lisp/~ to ~load-path~ for extra lisp code.
 #+END_SRC
 
 ** Name and address
-
 Manually set my full-name and mail-address fields.
 
 #+BEGIN_SRC emacs-lisp
@@ -79,7 +72,6 @@ Manually set my full-name and mail-address fields.
 #+END_SRC
 
 ** Daemon
-
 Start Emacs as a server/daemon so that we can open files from the
 system file browser with the Emacs client.
 
@@ -88,7 +80,6 @@ system file browser with the Emacs client.
 #+END_SRC
 
 ** Yes/no prompt
-
 Cause ~(y-or-n-p)~ to except "y" or "n" instead of "yes" or "no".
 
 #+BEGIN_SRC emacs-lisp
@@ -96,7 +87,6 @@ Cause ~(y-or-n-p)~ to except "y" or "n" instead of "yes" or "no".
 #+END_SRC
 
 ** Package archives
-
 Setup the MELPA Emacs package archive thing.
 
 #+BEGIN_SRC emacs-lisp
@@ -112,7 +102,6 @@ Setup the MELPA Emacs package archive thing.
 #+END_SRC
 
 ** ~use-package~
-
 To make this config work out of the box it's necessary to manually
 ensure that ~use-package~ is installed.
 
@@ -126,7 +115,6 @@ ensure that ~use-package~ is installed.
 #+END_SRC
 
 ** ~(setq use-package-always-ensure t)~
-
 Typing ~:ensure t~ in every use-package is silly. This just makes it
 so any instance of use-package automatically installs that package
 if it hasn't been installed already.
@@ -136,7 +124,6 @@ if it hasn't been installed already.
 #+END_SRC
 
 ** GUI elements
-
 Maximize on startup, hide some ugly GUI elements, and turn on
 ~delete-selection-mode~.
 
@@ -148,7 +135,6 @@ Maximize on startup, hide some ugly GUI elements, and turn on
 #+END_SRC
 
 ** ~delete-selection-mode~
-
 Selecting a region and beginning to type should automatically delete
 the region and begin inserting at the mark. The default behavior is to
 make the region inactive and begin inserting at the point.
@@ -158,7 +144,6 @@ make the region inactive and begin inserting at the point.
 #+END_SRC
 
 ** Scrolling
-
 This makes it so scrolling moves about one line at a time instead of
 moving in chunks when you hit the top or bottom of the screen. I used
 to have a few lines of code to do that job but there were problems
@@ -171,7 +156,6 @@ I use this package which works quite nicely.
 #+END_SRC
 
 ** Column limit enforcement
-
 I like source code to be perfect aesthetically, so it makes sense that
 I'd want my column limit to be strict. Enforcing perfection, however,
 creates a lot of tension due to conflicting interests. For instance, I
@@ -190,7 +174,6 @@ So anyway this is disabled for now.
 #+END_SRC
 
 ** Helm
-
 #+BEGIN_SRC emacs-lisp
   (use-package helm
     :bind (("M-x" . helm-M-x)
@@ -200,13 +183,11 @@ So anyway this is disabled for now.
 #+END_SRC
 
 ** Neotree
-
 #+BEGIN_SRC emacs-lisp
   (use-package neotree :bind ("C-c f" . neotree-dir))
 #+END_SRC
 
 ** Maximized frame state
-
 A handy little shortcut for toggling the maximized state of the
 current frame because the default keys (~<M-f10>~ and ~ESC <f10>~) are
 so shitty. Not that big of a deal since I mostly use tiling window
@@ -217,7 +198,6 @@ managers these days but it still comes in handy sometimes.
 #+END_SRC
 
 ** Backup files
-
 Force Emacs to put it's stupid backup files somewhere that's not in my
 /goddamn way/.
 
@@ -226,7 +206,6 @@ Force Emacs to put it's stupid backup files somewhere that's not in my
 #+END_SRC
 
 ** ~re-builder~ regexp syntax
-
 Set the ~re-builder~ syntax to ~string~, which is the syntax used by
 most of the Emacs regexp functions.
 
@@ -236,7 +215,6 @@ most of the Emacs regexp functions.
 #+END_SRC
 
 ** Pane navigation keybindings
-
 Some convenient keys for navigating around panes. These conflict with
 some ~org-mode~ keybindings sometimes but that's okay — ~org-mode~
 ruins a lot of good keybindings.
@@ -249,13 +227,11 @@ ruins a lot of good keybindings.
 #+END_SRC
 
 ** Disable cursor blinking
-
 #+BEGIN_SRC emacs-lisp
   (blink-cursor-mode 0)
 #+END_SRC
 
 ** Force display of column/line number
-
 Force Emacs to display the column and line number in the mode line
 even if it doesn't want to.
 
@@ -264,7 +240,6 @@ even if it doesn't want to.
 #+END_SRC
 
 ** Beacon
-
 An interesting little minor-mode that puts an animated beacon on the
 cursor when certain operations are performed. Currently disabled
 because it's too noisy.
@@ -274,7 +249,6 @@ because it's too noisy.
 #+END_SRC
 
 ** ~oak-mode~
-
 Load ~oak-mode.el~. This needs to happen here because the hasklig
 ligature code uses it.
 
@@ -283,7 +257,6 @@ ligature code uses it.
 #+END_SRC
 
 ** Sounds
-
 Emacs makes the most annoying beeping sounds on Windows. Shut the fuck
 up you fucking piece of shit!
 
@@ -294,7 +267,6 @@ up you fucking piece of shit!
 #+END_SRC
 
 ** ~delete-file-and-buffer~
-
 Quickly delete a file from its buffer.
 
 #+BEGIN_SRC emacs-lisp
@@ -316,7 +288,6 @@ URL: `http://emacsredux.com/blog/2013/04/03/delete-file-and-buffer/'"
 #+END_SRC
 
 ** ~vc-follow-symlinks~
-
 Opening a symlink to a version-controlled file sets of a prompt asking
 you if you want to follow the symlink (because you may be surprised
 later if you don't realize it's version-controlled). Setting this
@@ -328,7 +299,6 @@ suppresses the prompt (it displays a warning instead).
 #+END_SRC
 
 ** Encoding
-
 Everyone should always use UTF-8, always. 1,114,112 code points
 ought to be enough for anybody.
 
@@ -338,7 +308,6 @@ ought to be enough for anybody.
 #+END_SRC
 
 ** Spelling
-
 ~ispell~ is an unfortunate package name since it actually allows you
 to use whatever spelling program you want behind-the-scenes. You'll
 need to have aspell installed, of course.
@@ -350,9 +319,7 @@ need to have aspell installed, of course.
 #+END_SRC
 
 * Aesthetic
-
 ** Theme
-
 Current theme configuration:
 
 #+BEGIN_SRC emacs-lisp
@@ -362,7 +329,6 @@ Current theme configuration:
 #+END_SRC
 
 ** Dead theme configurations
-
 The rest of this subsection consists of disabled code blocks
 containing code you can use for theme configuration if you want.
 
@@ -377,7 +343,6 @@ containing code you can use for theme configuration if you want.
 #+END_SRC
 
 ** Moe themes
-
 There are two moe themes to pick from; choose wisely. If you use the
 light theme then you should also enable the last line because it looks
 nicer.
@@ -390,7 +355,6 @@ nicer.
 #+END_SRC
 
 ** Ample themes
-
 There are three ample themes to pick from; choose wisely. You must
 load and enable the theme you wish to use.
 
@@ -405,7 +369,6 @@ load and enable the theme you wish to use.
 #+END_SRC
 
 ** Spaceline
-
 Spaceline makes the mode line look nice. Turn this code back on if you
 decide to use the Spacemacs theme.
 
@@ -415,7 +378,6 @@ decide to use the Spacemacs theme.
 #+END_SRC
 
 ** Fonts
-
 #+BEGIN_SRC emacs-lisp
   ;; I love consolas.
   (set-face-attribute 'default nil :family "Consolas" :height 100)
@@ -425,7 +387,6 @@ decide to use the Spacemacs theme.
 #+END_SRC
 
 *** Hasklig Ligatures
-
 See https://github.com/i-tu/Hasklig/issues/84 and
 https://github.com/i-tu/Hasklig/blob/master/GlyphOrderAndAliasDB#L1588
 for details on this stuff. Currently disabled because I'm not using
@@ -469,7 +430,6 @@ Hasklig.
 #+END_SRC
 
 *** Hooks
-
 Add any hooks here if you want a particular mode to use the ligature
 code ligatures. This block will have to be tangled if you want it to
 work, of course.
@@ -479,11 +439,8 @@ work, of course.
   (add-hook 'oak-mode-hook     'my-set-hasklig-ligatures)
 #+END_SRC
 
-* Programming
-** Style & Utilities
-
+* Programming** Style & Utilities
 *** Indentation
-
 I prefer to use tabs for indentation, displayed as eight spaces.
 
 #+BEGIN_SRC emacs-lisp
@@ -495,7 +452,6 @@ I prefer to use tabs for indentation, displayed as eight spaces.
 #+END_SRC
 
 *** ~prog-mode~ spell-checking
-
 Turn on spellchecking for programming modes. This is nice to have
 around when it catches comment typos.
 
@@ -504,7 +460,6 @@ around when it catches comment typos.
 #+END_SRC
 
 *** Line numbers
-
 ~linum-mode~ is currently disabled because it is for
 homosexuals.
 
@@ -525,7 +480,6 @@ breakage.
 #+END_SRC
 
 *** Whitespace
-
 I don't use ~whitespace-mode~ any more because the intense visual
 clutter it creates has become unbearable to me—this is the same reason
 I have ~linum-mode~, ~beacon-mode~, and others disabled now.
@@ -538,7 +492,6 @@ I have ~linum-mode~, ~beacon-mode~, and others disabled now.
 #+END_SRC
 
 *** ~auto-fill-mode~
-
 This makes writing comments a little easier, but makes writing long
 strings more annoying.
 
@@ -547,9 +500,7 @@ strings more annoying.
 #+END_SRC
 
 ** General
-
 *** ~color-identifiers-mode~
-
 ~color-identifiers-mode~ is kinda cool but I don't use it any more.
 
 #+BEGIN_SRC emacs-lisp :tangle no
@@ -558,7 +509,6 @@ strings more annoying.
 #+END_SRC
 
 *** Compilation
-
 Bind ~f5~ to the compile command.
 
 #+BEGIN_SRC emacs-lisp
@@ -571,7 +521,6 @@ Bind ~f5~ to the compile command.
 #+END_SRC
 
 *** Trailing whitespace
-
 I used to have ~delete-trailing-whitespace~ hooked up to
 ~write-file-functions~ so that saving a file would automatically
 delete trailing whitespace, but that's not very practical if you're
@@ -583,7 +532,6 @@ pointing any fingers) because it clutters commits.
 #+END_SRC
 
 *** Multiple cursors at once
-
 Add ~multiple-cursors~ and ~phi-search~ (which is a reimplementation
 of isearch that's compatible with ~multiple-cursors~). All this crap
 is a bit bloaty so if you want to disable this that's cool, but I like
@@ -601,7 +549,6 @@ to have it around.
 #+END_SRC
 
 ** Flycheck
-
 Flycheck enables on-the-fly error syntax checking for a number of
 programming languages.
 
@@ -610,7 +557,6 @@ programming languages.
 #+END_SRC
 
 ** SmartParens
-
 All programming modes should use smartparens!
 
 #+BEGIN_SRC emacs-lisp
@@ -623,7 +569,6 @@ All programming modes should use smartparens!
 #+END_SRC
 
 *** Custom SmartParens
-
 In ~c-mode~ inserting a ~{~ should also add a newline and indent.
 
 #+BEGIN_SRC emacs-lisp
@@ -641,7 +586,6 @@ default, so we'll just define them ourselves.
 #+END_SRC
 
 ** Magit
-
 Magit is so fantastic it requires no configuration. It bothers me a
 bit that this binding doesn't lead with ~C-c~ but this is what the
 (massive and excellent) Magit manual recommends, so I'll just go with
@@ -652,7 +596,6 @@ it.
 #+END_SRC
 
 ** Company
-
 Require ~company~ and hook it up to ~c-mode-common-hook~.
 
 #+BEGIN_SRC emacs-lisp
@@ -670,7 +613,6 @@ Let ~company-mode~ know that it's allowed to complete header paths.
 #+END_SRC
 
 *** ~complete-or-indent~
-
 Make ~company-mode~ automagically figure out whether we want to
 complete an identifier or indent a line of code.
 
@@ -684,21 +626,18 @@ complete an identifier or indent a line of code.
 #+END_SRC
 
 ** YaSnippet
-
 #+BEGIN_SRC emacs-lisp
   (add-to-list 'load-path "~/.emacs.d/plugins/yasnippet")
   (use-package yasnippet :config (yas-global-mode 1))
 #+END_SRC
 
 *** TODO Use up-to-date snippets
-
 The ones that come standard are a bit inadequate, but it's been some
 time since I touched that stuff so I don't remember what's missing. A
 git submodule might work well for this, or maybe ~yasnippet-snippets~
 is the answer—https://github.com/joaotavora/yasnippet
 
 ** GGTags
-
 I Honestly don't remember where I got the keybindings but they look
 great so whatever.
 
@@ -722,9 +661,7 @@ great so whatever.
 #+END_SRC
 
 ** C/C++
-
 *** gdb
-
 Enable ~gdb-many-windows~, which opens a set of frames that display
 useful information, such as local variables, registers, stack trace,
 etc.
@@ -734,7 +671,6 @@ etc.
 #+END_SRC
 
 *** ~compile-command~
-
 Make ~compile-command~ a directory-local variable so that we can set
 it in a ~.dir-locals.el~ file.
 
@@ -743,7 +679,6 @@ it in a ~.dir-locals.el~ file.
 #+END_SRC
 
 ** Web
-
 Force ~web-mode~ to use tabs.
 
 #+BEGIN_SRC emacs-lisp
@@ -754,7 +689,6 @@ Force ~web-mode~ to use tabs.
 #+END_SRC
 
 ** oak
-
 Associate the ~.k~ extension with ~oak-mode~.
 
 #+BEGIN_SRC emacs-lisp
@@ -774,7 +708,6 @@ turn on ~color-identifiers-mode~.
 #+END_SRC
 
 * LaTeX
-
 Grab AUCTeX and AUCTeX-Lua. Unfortunately, the ~auctex~ package
 available from MELPA doesn't actually provide a feature called
 "auctex", so a different package has to be expected, otherwise
@@ -806,7 +739,6 @@ monospace fonts. Taken from [[https://stackoverflow.com/a/9539639][this]] StackO
 #+END_SRC
 
 ** Spelling
-
 Turn on automatic spell checking in ~LaTeX-mode~ (the AUCTeX version
 of Emacs' built-in ~latex-mode~) and also turn on ~auto-fill-mode~.
 Note that ~auto-fill-mode~ does fucky things with math and so must be
@@ -819,7 +751,6 @@ disabled by hand quite often.
 #+END_SRC
 
 ** Live LaTeX preview
-
 ~latex-preview-pane~ is fantastic. I wish it was easier to set up on
 Windows™. I used to have this hooked into ~LaTeX-mode~ but it creates
 too many problems. Org likes to create TeX buffers when generating PDF
@@ -830,7 +761,6 @@ files, for instance, so it would get pretty spammy.
 #+END_SRC
 
 ** CDLaTeX
-
 "CDLaTeX mode is a minor mode that is normally used in combination
 with a major $\LaTeX$ mode like AUCTeX in order to speed-up insertion
 of environments and math templates." Very nice.
@@ -840,15 +770,12 @@ of environments and math templates." Very nice.
 #+END_SRC
 
 * Org
-
 ** Smart quotes
-
 #+BEGIN_SRC emacs-lisp
   (setq org-export-with-smart-quotes t)
 #+END_SRC
 
 ** Code block syntax highlighting
-
 Turn on syntax highlighting for source code embedded in org-mode
 files.
 
@@ -857,7 +784,6 @@ files.
 #+END_SRC
 
 ** Spelling
-
 Spell-checking and convenient little settings.
 
 #+BEGIN_SRC emacs-lisp
@@ -867,7 +793,6 @@ Spell-checking and convenient little settings.
 #+END_SRC
 
 ** Misc
-
 Evaluating code blocks in ~org-mode~ documents is neat but you need to
 load each language individually.
 
@@ -892,7 +817,6 @@ Sometimes you just want typing math to be nicer.
 #+END_SRC
 
 *** Disable FlyCheck in Org source blocks
-
 Flycheck generates a ridiculous amount of spam in elisp snippets
 because it expects each snippet to follow the style standards of an
 Emacs package, so we'll just turn it off here. There's probably a way
@@ -905,7 +829,6 @@ syntax checking but I don't really care about that right now.
 #+END_SRC
 
 * ERC
-
 I don't actually use ERC.
 
 #+BEGIN_SRC emacs-lisp
@@ -915,9 +838,7 @@ I don't actually use ERC.
 #+END_SRC
 
 * Functions
-
 ** ~unfill-region~
-
 A handy function that undos what ~fill-region~ do.
 
 #+BEGIN_SRC emacs-lisp
@@ -930,7 +851,6 @@ A handy function that undos what ~fill-region~ do.
 #+END_SRC
 
 ** ~asciify~
-
 Sometimes pasting text from web sources places horrible Unicode
 characters into various kinds of documents. ~asciify~ solves this
 problem by converting characters like ~“~ and ~”~ into ~``~ and ~''~
@@ -973,7 +893,6 @@ translation works best with ~\usepackage{lmodern}~.
 #+END_SRC
 
 ** ~find-alternate-truename~
-
 Sometimes you might want to follow a symlink to the original file.
 
 #+BEGIN_SRC emacs-lisp
@@ -989,7 +908,6 @@ Sometimes you might want to follow a symlink to the original file.
 #+END_SRC
 
 * Fin
-
 Let's leave a good impression with the user.
 
 #+BEGIN_SRC emacs-lisp
