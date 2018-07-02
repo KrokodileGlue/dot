@@ -108,7 +108,14 @@ Maximize on startup, hide some ugly GUI elements, and turn on
   (toggle-scroll-bar -1)
   (tool-bar-mode -1)
   (menu-bar-mode -1)
-  (delete-selection-mode 1)
+#+END_SRC
+
+Selecting a region and beginning to type should automatically delete
+the region and begin inserting at the mark. The default behavior is to
+make the region inactive and begin inserting at the point.
+
+#+BEGIN_SRC emacs-lisp
+  (delete-selection-mode t)
 #+END_SRC
 
 This makes it so scrolling moves about one line at a time instead of
