@@ -60,6 +60,12 @@ system file browser with the Emacs client.
   (server-start)
 #+END_SRC
 
+Cause ~(y-or-n-p)~ to except "y" or "n" instead of "yes" or "no".
+
+#+BEGIN_SRC emacs-lisp
+  (fset 'yes-or-no-p 'y-or-n-p)
+#+END_SRC
+
 Setup the MELPA Emacs package archive thing.
 
 #+BEGIN_SRC emacs-lisp
