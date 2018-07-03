@@ -439,7 +439,8 @@ work, of course.
   (add-hook 'oak-mode-hook     'my-set-hasklig-ligatures)
 #+END_SRC
 
-* Programming** Style & Utilities
+* Programming
+** Style & Utilities
 *** Indentation
 I prefer to use tabs for indentation, displayed as eight spaces.
 
