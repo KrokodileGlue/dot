@@ -843,7 +843,7 @@ I don't actually use ERC.
 A handy function that undos what ~fill-region~ do.
 
 #+BEGIN_SRC emacs-lisp
-  (defun unfill-region ($beg $end)
+  (defun k/unfill-region ($beg $end)
     "Unfill the region from $BEG to $END, joining text paragraphs
   into a single logical line."
     (interactive "*r")
@@ -860,7 +860,7 @@ argument converts ~``~ and ~''~ into ~"~ instead. The guillemet
 translation works best with ~\usepackage{lmodern}~.
 
 #+BEGIN_SRC emacs-lisp
-  (defun asciify ($beg $end)
+  (defun k/asciify ($beg $end)
     "This function translates Unicode-only punctuation characters
   into nearly-equivalent ASCII characters in the current region."
     (interactive "*r")
@@ -890,14 +890,14 @@ translation works best with ~\usepackage{lmodern}~.
           (while (re-search-forward "`\\|'" (point-max) t)
             (replace-match "'"))))))
 
-  (global-set-key (kbd "C-c a") 'asciify)
+  (global-set-key (kbd "C-c a") 'k/asciify)
 #+END_SRC
 
 ** ~find-alternate-truename~
 Sometimes you might want to follow a symlink to the original file.
 
 #+BEGIN_SRC emacs-lisp
-  (defun find-alternate-truename (f)
+  (defun k/find-alternate-truename (f)
     "Replaces the current buffer with the truename of file @F."
     (find-alternate-file (file-truename f)))
 
@@ -905,7 +905,7 @@ Sometimes you might want to follow a symlink to the original file.
    (kbd "C-c f")
    (lambda ()
      (interactive)
-     (find-alternate-truename (buffer-file-name))))
+     (k/find-alternate-truename (buffer-file-name))))
 #+END_SRC
 
 * Fin
