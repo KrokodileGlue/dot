@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 # SPDX-License-Identifier: MIT
 
-#+SETUPFILE: ~/org-minimal-html-theme.setup
-# #+SETUPFILE: ~/.emacs.d/org-theme.setup
+# #+SETUPFILE: ~/org-minimal-html-theme.setup
+#+SETUPFILE: ~/.emacs.d/org-theme.setup
 #+TITLE: kmacs
 #+PROPERTY: header-args :tangle yes
 
@@ -323,7 +323,9 @@ need to have aspell installed, of course.
 Current theme configuration:
 
 #+BEGIN_SRC emacs-lisp
-  (use-package nimbus-theme      :init (load-theme 'nimbus t))
+  (use-package ample-theme)
+  (load-theme 'ample t t)
+  (enable-theme 'ample)
   (use-package spaceline
     :config (spaceline-spacemacs-theme))
 #+END_SRC
@@ -562,6 +564,7 @@ All programming modes should use smartparens!
 
 #+BEGIN_SRC emacs-lisp
   (use-package smartparens
+    :init (require 'smartparens-config)
     :config (add-hook
 	     'prog-mode-hook
 	     'smartparens-mode)
@@ -573,17 +576,17 @@ All programming modes should use smartparens!
 In ~c-mode~ inserting a ~{~ should also add a newline and indent.
 
 #+BEGIN_SRC emacs-lisp
-  (sp-local-pair 'c-mode "{" nil :post-handlers '(:add ("||\n[i]" "RET")))
+  (sp-local-pair 'c-mode
+		 "{" nil
+		 :post-handlers '(:add ("||\n[i]" "RET")))
 #+END_SRC
 
 For some reason SmartParens doesn't provide C++-style comments by
 default, so we'll just define them ourselves.
 
 #+BEGIN_SRC emacs-lisp
-  (add-hook 'c-mode-common-hook
-        (lambda ()
-      (sp-pair "/*" "*/")
-      (sp-pair "/* " " */")))
+  (sp-local-pair 'c-mode "/*" "*/")
+  (sp-local-pair 'c-mode "/* " " */")
 #+END_SRC
 
 ** Magit
@@ -874,6 +877,7 @@ translation works best with ~\usepackage{lmodern}~.
              (replace-match (elt $pair 1))))
          [
           ["‘" "`"]
+	  ["" "'"]
           ["’" "'"]
           ["“" "``"]
           ["”" "''"]
