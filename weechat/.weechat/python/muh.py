@@ -38,19 +38,11 @@ gays = [
     'k is gay',
     'jp is gay',
     'i am gay',
-    'i\'m fabulousssss bitchhh',
 
-    'yaaaaaaas queen slay omfg',
     'peter dinklage is hot',
-    'hey babe, take a walk on the wild side',
     'i want chris hemsworth to tie me to a radiator',
-    'i\'m here, i\'m queer',
-    'bless your heart',
-    'i am a streak of lavender',
-    'everybody\'s got a little sugar in em',
-    'my little gay heart is so happy',
-    'tennis is the gayest sport',
-    'let\'s be gay together sangy']
+    'let\'s be gay together sangy'
+]
 
 fnord = [
     '%s is evaporated herbal tea without the herbs.',
@@ -243,6 +235,7 @@ def cb(data, buf, date, tags, displayed, highlight, nick, msg):
     if chan not in ['freenode.' + c for c in channels] or nick in nicks:
         return w.WEECHAT_RC_OK
 
+    if repeat(chan, msg, "[^c]ei", "i before e except after c"):      return w.WEECHAT_RC_OK
     if repeat(chan, msg, "^\s+$", " "):                               return w.WEECHAT_RC_OK
     if repeat(chan, msg, ".*?(?i)what day is it", "today is friday"): return w.WEECHAT_RC_OK
     if repeat(chan, msg, ".*?(?i)the way", "dae wae"):                return w.WEECHAT_RC_OK
