@@ -235,7 +235,7 @@ def cb(data, buf, date, tags, displayed, highlight, nick, msg):
     if chan not in ['freenode.' + c for c in channels] or nick in nicks:
         return w.WEECHAT_RC_OK
 
-    if repeat(chan, msg, "[^c]ei", "i before e except after c"):      return w.WEECHAT_RC_OK
+    if repeat(chan, msg, ".*?(?i)[^ch]ei", "i before e except after c"):return w.WEECHAT_RC_OK
     if repeat(chan, msg, "^\s+$", " "):                               return w.WEECHAT_RC_OK
     if repeat(chan, msg, ".*?(?i)what day is it", "today is friday"): return w.WEECHAT_RC_OK
     if repeat(chan, msg, ".*?(?i)the way", "dae wae"):                return w.WEECHAT_RC_OK
