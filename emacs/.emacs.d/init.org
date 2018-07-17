@@ -256,12 +256,11 @@ ligature code uses it.
   (require 'oak-mode)
 #+END_SRC
 
-** Sounds
-Emacs makes the most annoying beeping sounds on Windows. Shut the fuck
-up you fucking piece of shit!
+** Bell
+I don't like flashing and noises and stuff.
 
 #+BEGIN_SRC emacs-lisp
-  (setq visible-bell t)
+  (setq ring-bell-function 'ignore)
   (setq ielm-noisy nil) ; I don't use ielm often but when I do it needs
 			; to shut the fuck up.
 #+END_SRC
@@ -309,7 +308,7 @@ ought to be enough for anybody.
 
 ** Spelling
 ~ispell~ is an unfortunate package name since it actually allows you
-to use whatever spelling program you want behind-the-scenes. You'll
+to use whatever spelling program you want behind the scenes. You'll
 need to have aspell installed, of course.
 
 #+BEGIN_SRC emacs-lisp
@@ -318,14 +317,33 @@ need to have aspell installed, of course.
   (setq ispell-dictionary "english")
 #+END_SRC
 
+** Manpages
+~M-x man~ is just cumbersome.
+
+#+BEGIN_SRC emacs-lisp
+  (global-set-key (kbd "C-c m") 'man)
+#+END_SRC
+
+** Reverting buffers
+I used to use ~C-x C-v~ to revert a file to its saved state, but that
+resets the position of the point to the beginning of the
+buffer. Typing ~revert-buffer~ manually is cumbersome and presents a
+confirmation prompt, so this keybinding is the most convenient way to
+revert buffers that I know of.
+
+#+BEGIN_SRC emacs-lisp
+  (global-set-key (kbd "C-c r")
+		  (lambda ()
+		    (interactive)
+		    (revert-buffer :ignore-auto :noconfirm)))
+#+END_SRC
+
 * Aesthetic
 ** Theme
 Current theme configuration:
 
 #+BEGIN_SRC emacs-lisp
-  (use-package ample-theme)
-  (load-theme 'ample t t)
-  (enable-theme 'ample)
+  (use-package purple-haze-theme :init (load-theme 'purple-haze t))
   (use-package spaceline
     :config (spaceline-spacemacs-theme))
 #+END_SRC
@@ -454,8 +472,16 @@ I prefer to use tabs for indentation, displayed as eight spaces.
         c-indent-tabs-mode 1)
 #+END_SRC
 
+*** ~smart-tabs-mode~
+[[https://www.emacswiki.org/pics/static/TabsSpacesBoth.png]]
+
+#+BEGIN_SRC emacs-lisp
+  (use-package smart-tabs-mode)
+  (smart-tabs-insinuate 'c 'javascript)
+#+END_SRC
+
 *** ~prog-mode~ spell-checking
-Turn on spellchecking for programming modes. This is nice to have
+Turn on spell checking for programming modes. This is nice to have
 around when it catches comment typos.
 
 #+BEGIN_SRC emacs-lisp
@@ -534,21 +560,14 @@ pointing any fingers) because it clutters commits.
   (global-set-key (kbd "C-c p") 'delete-trailing-whitespace)
 #+END_SRC
 
-*** Multiple cursors at once
-Add ~multiple-cursors~ and ~phi-search~ (which is a reimplementation
-of isearch that's compatible with ~multiple-cursors~). All this crap
-is a bit bloaty so if you want to disable this that's cool, but I like
-to have it around.
+*** swiper
+Emacs' default search is not very good.
 
 #+BEGIN_SRC emacs-lisp
-  (use-package multiple-cursors
-    :bind (("C->" . mc/mark-next-like-this)
-	   ("C-<" . mc/mark-previous-like-this)
-	   ("C-c C-<" . mc/mark-all-like-this))
-    :config (add-hook 'prog-mode-hook 'multiple-cursors-mode))
-  (use-package phi-search
-    :bind (("C-s" . phi-search)
-	   ("C-r" . phi-search-backward)))
+  (use-package ivy
+    :config (setq ivy-height 25))
+  (use-package swiper
+    :bind (("C-s" . swiper)))
 #+END_SRC
 
 ** Flycheck
@@ -612,6 +631,7 @@ Require ~company~ and hook it up to ~c-mode-common-hook~.
 Let ~company-mode~ know that it's allowed to complete header paths.
 
 #+BEGIN_SRC emacs-lisp
+  (use-package company-c-headers)
   (setq company-backends (delete 'company-semantic company-backends))
   (add-to-list 'company-backends 'company-c-headers)
 #+END_SRC
@@ -661,7 +681,8 @@ great so whatever.
 	   ("C-c g f" . ggtags-find-file)
 	   ("C-c g c" . ggtags-create-tags)
 	   ("C-c g u" . ggtags-update-tags)
-	   ("M-," . pop-tag-mark)))
+	   ("M-," . pop-tag-mark)
+	   ("M-." . ggtags-find-tag-dwim)))
 #+END_SRC
 
 ** C/C++
@@ -818,6 +839,15 @@ Sometimes you just want typing math to be nicer.
 
 #+BEGIN_SRC emacs-lisp
   (add-hook 'org-mode-hook 'turn-on-org-cdlatex)
+#+END_SRC
+
+*** Hook org-mode into text files
+Org-mode offers non-intrusive features that make manipulating text
+files easier, so we'll just prefer that for files that would usually
+be placed into ~fundamental-mode~.
+
+#+BEGIN_SRC emacs-lisp
+  (add-to-list 'auto-mode-alist '("\\.txt\\'" . org-mode))
 #+END_SRC
 
 *** Disable FlyCheck in Org source blocks
