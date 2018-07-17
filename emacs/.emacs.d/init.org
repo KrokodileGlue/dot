@@ -10,19 +10,15 @@
 #+LATEX_HEADER: \usepackage[parfill]{parskip}
 #+LATEX_HEADER: \usepackage[margin=1in]{geometry}
 
-# TODO: Use ~bind-key.el~ instead of ~global-set-key~.
-# TODO: Use ~use-package~ more extensively to automate package
-#       installation.
 # TODO: Use ~org-plus-contribs~ and add ~org-drill~ to ~org-modules~.
 # TODO: Change ~org-drill.el~ learning fraction.
 # TODO: Figure out how to share customized variables across machines
 #       properly.
 # TODO: Figure out a good way to distribute ~oak-mode.el~ and
 #       ~erc-tex.el~.
-# TODO: Maybe use more ~:defer~.
 
 # This is here so that the table of contents doesn't overlap with the
-# first page of contents in LaTeX renders.
+# first page of contents in LaTeX renders:
 
 #+LATEX: \clearpage{}
 
