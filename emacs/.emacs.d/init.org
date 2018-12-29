@@ -169,6 +169,10 @@ So anyway this is disabled for now.
            (global-visual-fill-column-mode))
 #+END_SRC
 
+#+BEGIN_SRC emacs-lisp
+  (set-default 'truncate-lines t)
+#+END_SRC
+
 ** Helm
 #+BEGIN_SRC emacs-lisp
   (use-package helm
@@ -339,7 +343,7 @@ revert buffers that I know of.
 Current theme configuration:
 
 #+BEGIN_SRC emacs-lisp
-  (use-package purple-haze-theme :init (load-theme 'purple-haze t))
+  (use-package nimbus-theme      :init (load-theme 'nimbus t))
   (use-package spaceline
     :config (spaceline-spacemacs-theme))
 #+END_SRC
@@ -790,6 +794,15 @@ of environments and math templates." Very nice.
   (use-package cdlatex)
 #+END_SRC
 
+* ~nov.el~
+Install the ~nov~ package and associate the .epub extension with
+~nov-mode~.
+
+#+BEGIN_SRC emacs-lisp
+  (use-package nov)
+  (add-to-list 'auto-mode-alist '("\\.epub\\'" . nov-mode))
+#+END_SRC
+
 * Org
 ** Smart quotes
 #+BEGIN_SRC emacs-lisp
@@ -811,6 +824,18 @@ Spell-checking and convenient little settings.
   (add-hook 'org-mode-hook 'flyspell-mode)
   (add-hook 'org-mode-hook 'auto-fill-mode)
   ;; (add-hook 'org-mode-hook 'org-indent-mode)
+#+END_SRC
+
+~org-ref~ is a great package for dealing with references, citations,
+and bibliographies in advanced org documents.
+
+#+BEGIN_SRC emacs-lisp
+  (use-package org-ref)
+
+  (setq reftex-default-bibliography '("~/Dropbox/bibliography/references.bib"))
+  (setq org-ref-bibliography-notes "~/Dropbox/bibliography/notes.org"
+	org-ref-default-bibliography '("~/Dropbox/bibliography/references.bib")
+	org-ref-pdf-directory "~/Dropbox/bibliography/bibtex-pdfs/")
 #+END_SRC
 
 ** Misc
@@ -837,10 +862,15 @@ Sometimes you just want typing math to be nicer.
   (add-hook 'org-mode-hook 'turn-on-org-cdlatex)
 #+END_SRC
 
+#+BEGIN_SRC emacs-lisp
+  (require 'org-drill)
+  (require 'org-inlinetask)
+#+END_SRC
+
 *** Hook org-mode into text files
 Org-mode offers non-intrusive features that make manipulating text
 files easier, so we'll just prefer that for files that would usually
-be placed into ~fundamental-mode~.
+be opened in ~fundamental-mode~.
 
 #+BEGIN_SRC emacs-lisp
   (add-to-list 'auto-mode-alist '("\\.txt\\'" . org-mode))
@@ -936,6 +966,22 @@ Sometimes you might want to follow a symlink to the original file.
    (lambda ()
      (interactive)
      (k/find-alternate-truename (buffer-file-name))))
+#+END_SRC
+
+** ~insert-latex-environment~
+It's really annoying that org-mode doesn't have an
+~insert-latex-environment~-like keybinding.
+
+#+BEGIN_SRC emacs-lisp
+  (defun k/insert-latex-environment ()
+    (interactive)
+    (setq env (read-from-minibuffer "Enter an environment name: "))
+    (insert (format "\\begin{%s}\n\n\\end{%s}" env env))
+    (previous-line))
+
+  (global-set-key
+   (kbd "C-c x")
+   'k/insert-latex-environment)
 #+END_SRC
 
 * Fin
