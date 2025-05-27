@@ -253,7 +253,7 @@ Load ~oak-mode.el~. This needs to happen here because the hasklig
 ligature code uses it.
 
 #+BEGIN_SRC emacs-lisp
-  (require 'oak-mode)
+  ;(require 'oak-mode)
 #+END_SRC
 
 ** Bell
@@ -343,7 +343,12 @@ revert buffers that I know of.
 Current theme configuration:
 
 #+BEGIN_SRC emacs-lisp
-  (use-package nimbus-theme      :init (load-theme 'nimbus t))
+  ;; (use-package nimbus-theme
+  ;;   :init (load-theme 'nimbus t))
+
+  (use-package monokai-pro-theme
+    :init (load-theme 'monokai-pro t))
+
   (use-package spaceline
     :config (spaceline-spacemacs-theme))
 #+END_SRC
@@ -465,19 +470,32 @@ work, of course.
 I prefer to use tabs for indentation, displayed as eight spaces.
 
 #+BEGIN_SRC emacs-lisp
+  (defun disable-tabs () (setq indent-tabs-mode nil))
+  (defun enable-tabs  ()
+    (local-set-key (kbd "TAB") 'tab-to-tab-stop)
+    (setq indent-tabs-mode t)
+    (setq tab-width custom-tab-width))
+
   (setq cmake-tab-width 8)
+
   (setq-default
         c-basic-offset 8
         c-indent-level 8
         c-indent-tabs-mode 1)
+
+  (add-hook 'typescript-mode-hook 'disable-tabs)
+
+  (setq-default js-indent-level 2)
+  (setq-default typescript-indent-level 2)
+  (setq typescript-auto-indent-flag t)
 #+END_SRC
 
 *** ~smart-tabs-mode~
 [[https://www.emacswiki.org/pics/static/TabsSpacesBoth.png]]
 
 #+BEGIN_SRC emacs-lisp
-  (use-package smart-tabs-mode)
-  (smart-tabs-insinuate 'c 'javascript)
+  ;; (use-package smart-tabs-mode)
+  ;; (smart-tabs-insinuate 'c 'javascript)
 #+END_SRC
 
 *** ~prog-mode~ spell-checking
@@ -713,6 +731,40 @@ Force ~web-mode~ to use tabs.
              'web-mode-use-tabs))
 #+END_SRC
 
+#+BEGIN_SRC emacs-lisp
+  (use-package lsp-mode
+    :commands (lsp lsp-deferred)
+    :init (setq lsp-keymap-prefix "C-c l")
+    :config (lsp-enable-which-key-integration t))
+#+END_SRC
+
+#+BEGIN_SRC emacs-lisp
+  (use-package tide)
+
+  (defun setup-tide-mode ()
+    (interactive)
+    (tide-setup)
+    (flycheck-mode +1)
+    (setq flycheck-check-syntax-automatically '(save mode-enabled))
+    (eldoc-mode +1)
+    (tide-hl-identifier-mode +1)
+    ;; company is an optional dependency. You have to
+    ;; install it separately via package-install
+    ;; `M-x package-install [ret] company`
+    (company-mode +1))
+
+  ;; aligns annotation to the right hand side
+  (setq company-tooltip-align-annotations t)
+
+  ;; formats the buffer before saving
+  (add-hook 'before-save-hook 'tide-format-before-save)
+
+  ;; if you use typescript-mode
+  (add-hook 'typescript-mode-hook #'setup-tide-mode)
+  ;; if you use treesitter based typescript-ts-mode (emacs 29+)
+  (add-hook 'typescript-ts-mode-hook #'setup-tide-mode)
+#+END_SRC
+
 ** oak
 Associate the ~.k~ extension with ~oak-mode~.
 
@@ -863,7 +915,7 @@ Sometimes you just want typing math to be nicer.
 #+END_SRC
 
 #+BEGIN_SRC emacs-lisp
-  (require 'org-drill)
+  ;(require 'org-drill)
   (require 'org-inlinetask)
 #+END_SRC
 
@@ -892,8 +944,8 @@ syntax checking but I don't really care about that right now.
 I don't actually use ERC.
 
 #+BEGIN_SRC emacs-lisp
-  (use-package erc)
-  (use-package znc)
+  ;; (use-package erc)
+  ;; (use-package znc)
   ;; (require 'erc-tex)
 #+END_SRC
 
